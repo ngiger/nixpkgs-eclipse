@@ -3,6 +3,7 @@
 #
 { stdenvNoCC
 , stdenv
+, fontconfig
 , fetchurl
 , buildEnv
 , eclipse

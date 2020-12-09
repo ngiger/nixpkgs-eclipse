@@ -11,7 +11,7 @@
 
 , freetype, fontconfig, libX11, libXrender, zlib # FIXME optional?
 
-, webkitgtk220x ? null # optional browser support (gtk3)
+, webkitgtk ? null # optional browser support (gtk3)
 , glib-networking ? null # optional browser ssl/tls support
 , libcanberra ? null  # optional sound system support
 
@@ -34,7 +34,7 @@ let
 #    javaLibrary = javaVersion:
 #        if javaVersion == "8"  then { gtk=gtk2; canb=libcanberra_gtk2; webk=null; } else
 #        if javaVersion == "9"  then { gtk=gtk2; canb=libcanberra_gtk2; webk=null; }  else
-#        if javaVersion == "10" then { gtk=gtk3; canb=libcanberra_gtk3; webk=webkitgtk220x; }  else
+#        if javaVersion == "10" then { gtk=gtk3; canb=libcanberra_gtk3; webk=webkitgtk; }  else
 #        abort "Unsupported java version: ${javaName}"
 #    ;
 
@@ -61,7 +61,7 @@ rec {
 
     wrapperLibraryPath = lib.makeLibraryPath ([
         glib gtk2 gtk3 libXtst
-        glib-networking webkitgtk220x libcanberra
+        glib-networking webkitgtk libcanberra
     ]);
 
     wrapperBinaryPath = lib.makeSearchPath "bin" [
