@@ -4,15 +4,16 @@
 { stdenvNoCC
 , eclipse
 , buildEnv
+, openjdk11
 }:
 
 with eclipse.option;
 with eclipse.launcher;
 
 # instance function
-{ name # unique runtime name 
-, java ? oraclejdk8auto # eclipse host jdk
-, meta ? {} # runtime origin descriptor 
+{ name # unique runtime name
+, java ? openjdk11 # eclipse host jdk
+, meta ? {} # runtime origin descriptor
 , layout ? {}  # distro root dir layout
 , packages ? {} # mapping: system -> download
 }:
@@ -28,13 +29,13 @@ let
 
     system = stdenvNoCC.system;
 
-    package = if builtins.hasAttr system packages 
+    package = if builtins.hasAttr system packages
         then packages."${system}"
         else abort "Missing package for system: ${system}"
     ;
-    
+
     packageName = baseNameOf package.url;
-        
+
     runtimeInstall = makePackageInstall {
         package = package;
         name = packageName;
@@ -61,15 +62,15 @@ let
     runtimeResult = buildEnv {
         inherit (this) name;
         paths = [
-            runtimeRooter 
-            runtimeEclipseIni 
+            runtimeRooter
+            runtimeEclipseIni
             runtimeWrapper
         ];
         passthru = {
             install = runtimeInstall;
         };
     };
-    
+
 in runtimeResult // this // {
     exec = runtimeWrapper.link;
 }

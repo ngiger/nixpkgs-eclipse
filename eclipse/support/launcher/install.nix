@@ -2,6 +2,7 @@
 # Produce eclipse installation
 #
 { stdenvNoCC
+, stdenv
 , fetchurl
 , buildEnv
 , eclipse
@@ -27,7 +28,7 @@ rec {
             name = "eclipse-java";
             paths = rootList;
         };
-    in 
+    in
     result // {
     };
 
@@ -46,7 +47,7 @@ rec {
                ln -s "${sors}" "$root"
             '';
         };
-    in 
+    in
     result // {
     };
 
@@ -63,17 +64,17 @@ rec {
                mkdir -p "$rootDir"
                ln -s "${sors}/${path}" "$rootDir"
             '';
-        };    
+        };
     in
     result // {
         base = with result; "${out}/${base}";
         path = with result; "${out}/${base}/${path}";
     };
-    
+
     # assemble eclipse configuration folder
-    makeConfigFolder = { 
-        sors, name, base, layout, 
-        javaList 
+    makeConfigFolder = {
+        sors, name, base, layout,
+        javaList
     }:
     let
         path = "${layout.root}/${layout.conf}";
@@ -109,27 +110,27 @@ rec {
     # download and adapt eclipse package
     makePackageInstall = { package, name, layout }:
     let
-    
+
         source = fetchurl {
             inherit (package) url sha1 sha256 sha512;
         };
-    
+
         install = stdenvNoCC.mkDerivation {
             src = source;
             name = "install-${name}";
             phases = [ "unpackPhase" "buildPhase" ];
             buildInputs = [ file ];
             buildPhase = ''
-            
+
                 baseDir="$out"
                 executable=$baseDir/${layout.root}/${layout.exec}
                 libraryCairo=$baseDir/${layout.root}/${layout.libCairo}
-              
+
                 mkdir -p $baseDir
                 tar xfz $src --directory=$baseDir --strip=0
-            
-                interpreter=$(echo ${stdenvNoCC.glibc.out}/lib/ld-linux*.so.2)
-                
+
+                interpreter=$(echo ${stdenv.glibc.out}/lib/ld-linux*.so.2)
+
                 if [[ -x $executable ]] ; then
                     patchelf --set-interpreter $interpreter $executable
                 else
@@ -137,7 +138,7 @@ rec {
                     ls -las $out
                     exit 1
                 fi
-            
+
                 if [[ -f $libraryCairo ]]; then
                     patchelf --set-rpath ${wrapperCairoLibs} $libraryCairo
                 else
@@ -147,15 +148,15 @@ rec {
                 # FIXME generalize
                 echo "Updating native ..."
                 nativeRegex="*native*"
-                find "$out" -path "$nativeRegex" | 
-                xargs -I % file -i "%" | 
+                find "$out" -path "$nativeRegex" |
+                xargs -I % file -i "%" |
                 grep "application/x-executable" |
                 sed -r 's/([^:]+):.+/\1/' |
                 xargs -I % chmod +x "%" || true
-			    
+
             '';
         };
-        
+
     in install // {
     };
 

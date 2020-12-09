@@ -8,8 +8,10 @@ let
     requireFetch = include ./support/requireFetch {};
     context = {
         inherit eclipse requireFetch;
-        oraclejdk8 = include ./support/oracle/jdk8cpu-linux.nix {};
-        oraclejdk10 = include ./support/oracle/jdk10-linux.nix {};
+#         oraclejdk8 = include ./support/oracle/jdk8cpu-linux.nix {};
+#        oraclejdk10 = include ./support/oracle/jdk10-linux.nix {};
+         #  openjdk11 = include ./support/oracle/jdk11-linux.nix {};
+          openjdk11 = include /opt/src/nixpkgs/pkgs/development/compilers/openjdk/11.nix {} ;
     };
 
 in rec
@@ -23,5 +25,5 @@ in rec
 
     launcher = include ./support/launcher {};
     fetchsite = include ./support/fetchsite {};
-    
+
 }

@@ -4,4 +4,4 @@ set -e
 
 source ${BASH_SOURCE%/*}/any.sh
 
-nix_verify eclipse.runtime.rcp-473a
+nix_verify eclipse.runtime.rcp-4-17
